@@ -81,8 +81,9 @@ public class MainActivity extends AppCompatActivity implements SwipeStack.SwipeS
         } else if (v.equals(mButtonRight)) {
             mSwipeStack.swipeTopViewToRight();
         } else if (v.equals(mFab)) {
-            mData.add(getString(R.string.dummy_fab));
-            mAdapter.notifyDataSetChanged();
+            /*mData.add(getString(R.string.dummy_fab));
+            mAdapter.notifyDataSetChanged();*/
+            mSwipeStack.bringbackTopCard();
         }
     }
 

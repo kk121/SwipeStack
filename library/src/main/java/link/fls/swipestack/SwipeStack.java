@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
@@ -213,6 +214,65 @@ public class SwipeStack extends ViewGroup {
 
             mCurrentViewIndex++;
         }
+    }
+
+    public void bringbackTopCard() {
+        int removedCardPosition = mCurrentViewIndex - getChildCount() - 1;
+        Log.d("TAG", "bringbackTopCard: " + removedCardPosition);
+        if (removedCardPosition < mAdapter.getCount()) {
+            View topView = mAdapter.getView(removedCardPosition, null, this);
+            topView.setTag(R.id.new_view, true);
+
+            if (!mDisableHwAcceleration) {
+                topView.setLayerType(LAYER_TYPE_HARDWARE, null);
+            }
+
+            if (mViewRotation > 0) {
+                topView.setRotation(mRandom.nextInt(mViewRotation) - (mViewRotation / 2));
+            }
+
+            int width = getWidth() - (getPaddingLeft() + getPaddingRight());
+            int height = getHeight() - (getPaddingTop() + getPaddingBottom());
+
+            LayoutParams params = topView.getLayoutParams();
+            if (params == null) {
+                params = new LayoutParams(
+                        FrameLayout.LayoutParams.WRAP_CONTENT,
+                        FrameLayout.LayoutParams.WRAP_CONTENT);
+            }
+
+            int measureSpecWidth = MeasureSpec.AT_MOST;
+            int measureSpecHeight = MeasureSpec.AT_MOST;
+
+            if (params.width == LayoutParams.MATCH_PARENT) {
+                measureSpecWidth = MeasureSpec.EXACTLY;
+            }
+
+            if (params.height == LayoutParams.MATCH_PARENT) {
+                measureSpecHeight = MeasureSpec.EXACTLY;
+            }
+
+            topView.measure(measureSpecWidth | width, measureSpecHeight | height);
+            addViewInLayout(topView, getChildCount(), params, true);
+            mCurrentViewIndex--;
+//            reorderItems();
+//            animateRestoredCard(topView);
+            removeView(getChildAt(0));
+        }
+    }
+
+    private void animateRestoredCard(View topView) {
+       /* topView.animate()
+                .x(mSwipeStack.getWidth() + mObservedView.getX())
+                .rotation(mRotateDegrees)
+                .alpha(0f)
+                .setDuration(duration)
+                .setListener(new AnimationUtils.AnimationEndListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mSwipeStack.onViewSwipedToRight();
+                    }
+                });*/
     }
 
     private void reorderItems() {
