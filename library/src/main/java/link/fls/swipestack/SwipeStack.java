@@ -219,7 +219,7 @@ public class SwipeStack extends ViewGroup {
     public void bringbackTopCard() {
         int removedCardPosition = mCurrentViewIndex - getChildCount() - 1;
         Log.d("TAG", "bringbackTopCard: " + removedCardPosition);
-        if (removedCardPosition < mAdapter.getCount()) {
+        if (removedCardPosition < mAdapter.getCount() && removedCardPosition >= 0) {
             View topView = mAdapter.getView(removedCardPosition, null, this);
             topView.setTag(R.id.new_view, true);
 
